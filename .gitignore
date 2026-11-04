@@ -1,0 +1,28 @@
+# Vercel
+.vercel
+node_modules/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Scraper & generation scratch files
+raw_contrib_*.html
+live_*.json
+detected_target_grid.json
+final_os_schedule.json
+scraped_pattern.json
+github_extracted.json
+full_years_data.json
+build_official_data.py
+calculate_target_plan.py
+detect_grid.py
+generate_and_push_commits.py
+generate_html.py
+*.log
+test_*.js
+verify_*.js
+update_*.js
+
+# Local files
+ascii.svg

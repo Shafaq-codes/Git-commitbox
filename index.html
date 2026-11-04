@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub Contribution Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root, [data-theme="light"] {
+      --bg: #F6F8FA;
+      --card-bg: #FFFFFF;
+      --border-color: #D0D7DE;
+      --text: #1F2328;
+      --text-muted: #656D76;
+      --blue-btn: #0969DA;
+      --blue-btn-hover: #0860CA;
+      --tool-bg: #F6F8FA;
+      --tool-border: #D0D7DE;
+      
+      /* Exact GitHub Official Light Mode Colors */
+      --cell-0: #EBEDF0;
+      --cell-1: #9BE9A8;
+      --cell-2: #40C463;
+      --cell-3: #30A14E;
+      --cell-4: #216E39;
+      --cell-outline: rgba(27, 31, 36, 0.08);
+      --cell-hover-border: #0969DA;
+      --pill-bg: #F6F8FA;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0D1117;
+      --card-bg: #161B22;
+      --border-color: #30363D;
+      --text: #E6EDF3;
+      --text-muted: #848D97;
+      --blue-btn: #1F6FEB;
+      --blue-btn-hover: #388BFD;
+      --tool-bg: #161B22;
+      --tool-border: #30363D;
+
+      /* GitHub Dark Colors */
+      --cell-0: #161B22;
+      --cell-1: #0E4429;
+      --cell-2: #006D32;
+      --cell-3: #26A641;
+      --cell-4: #39D353;
+      --cell-outline: rgba(255, 255, 255, 0.05);
+      --cell-hover-border: #58A6FF;
+      --pill-bg: #21262D;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1.5rem 4rem;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Top Brand Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .title-group {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .title-group svg {
+      width: 32px;
+      height: 32px;
+      fill: var(--text);
+    }
+
+    .title-group h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .title-group p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .theme-toggle {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      height: 34px;
+      box-sizing: border-box;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+
+    .theme-toggle:hover {
+      background: var(--tool-bg);
+    }
+
+    /* Developer's GitHub Button - Exact same size as theme-toggle */
+    .dev-badge-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      height: 34px;
+      box-sizing: border-box;
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      white-space: nowrap;
+    }
+
+    .dev-badge-btn:hover {
+      background: var(--tool-bg);
+      border-color: var(--blue-btn);
+      color: var(--blue-btn);
+      transform: translateY(-1px);
+    }
+
+    .dev-badge-btn svg {
+      width: 15px;
+      height: 15px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* Creative Templates Bar */
+    .templates-bar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .templates-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .templates-pills {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+
+    .templates-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tpl-btn {
+      background: var(--pill-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .tpl-btn:hover {
+      background: #0969DA;
+      color: #FFFFFF;
+      border-color: #0969DA;
+      transform: translateY(-1px);
+    }
+
+    /* Toolbar Panel */
+    .toolbar {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 0.85rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .tool-group-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tool-modes {
+      display: flex;
+      background: var(--tool-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 3px;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+
+    .mode-btn.active {
+      background: var(--card-bg);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      border: 1px solid var(--border-color);
+    }
+
+    .swatches-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .swatch-group {
+      display: flex;
+      gap: 5px;
+      background: var(--tool-bg);
+      border: 1px solid var(--border-color);
+      padding: 3px 6px;
+      border-radius: 7px;
+    }
+
+    .swatch {
+      width: 17px;
+      height: 17px;
+      border-radius: 3px;
+      cursor: pointer;
+      border: 1px solid var(--cell-outline);
+      transition: transform 0.15s;
+    }
+
+    .swatch:hover {
+      transform: scale(1.2);
+    }
+
+    .swatch.selected {
+      outline: 2px solid var(--blue-btn);
+      outline-offset: 1px;
+    }
+
+    .tool-group-right {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text);
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
+    }
+
+    .btn:hover {
+      background: var(--tool-bg);
+      transform: translateY(-1px);
+    }
+
+    .btn.primary {
+      background: #1F883D;
+      border-color: rgba(27, 31, 36, 0.15);
+      color: #FFFFFF;
+    }
+
+    .btn.primary:hover {
+      background: #1A7F37;
+    }
+
+    /* Main Grid Viewport & Sidebar */
+    .main-layout {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .graph-column {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .heading-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 2px;
+    }
+
+    .contrib-heading {
+      font-size: 16px;
+      font-weight: 400;
+      color: var(--text);
+    }
+
+    .contrib-heading strong {
+      font-weight: 600;
+    }
+
+    .contrib-settings-pill {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+    }
+
+    .contrib-settings-pill:hover {
+      color: var(--blue-btn);
+    }
+
+    /* Official GitHub White Graph Card */
+    .github-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 18px 20px 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      overflow-x: auto;
+    }
+
+    .ContributionCalendar-grid {
+      border-collapse: separate;
+      border-spacing: 3.5px;
+      width: max-content;
+      margin: 0 auto;
+    }
+
+    .month-header-td {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 400;
+      text-align: left;
+      padding-bottom: 5px;
+      height: 18px;
+      position: relative;
+    }
+
+    .month-header-td span {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .day-label-td {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      width: 30px;
+      text-align: right;
+      padding-right: 8px;
+      line-height: 13.5px;
+      height: 13.5px;
+      vertical-align: middle;
+    }
+
+    .ContributionCalendar-day {
+      width: 13.5px;
+      height: 13.5px;
+      border-radius: 2.5px;
+      outline: 1px solid var(--cell-outline);
+      outline-offset: -1px;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+      background-color: var(--cell-0);
+    }
+
+    .ContributionCalendar-day:hover {
+      transform: scale(1.35);
+      z-index: 10;
+      position: relative;
+      outline: 2px solid var(--cell-hover-border);
+      outline-offset: -1px;
+    }
+
+    .ContributionCalendar-day[data-level="0"] { background-color: var(--cell-0); }
+    .ContributionCalendar-day[data-level="1"] { background-color: var(--cell-1); }
+    .ContributionCalendar-day[data-level="2"] { background-color: var(--cell-2); }
+    .ContributionCalendar-day[data-level="3"] { background-color: var(--cell-3); }
+    .ContributionCalendar-day[data-level="4"] { background-color: var(--cell-4); }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 14px;
+      padding-top: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .card-footer a {
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+
+    .card-footer a:hover {
+      color: var(--blue-btn);
+      text-decoration: underline;
+    }
+
+    .legend-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .legend-square {
+      width: 12px;
+      height: 12px;
+      border-radius: 2px;
+      outline: 1px solid var(--cell-outline);
+      outline-offset: -1px;
+      display: inline-block;
+    }
+
+    .legend-square[data-level="0"] { background-color: var(--cell-0); }
+    .legend-square[data-level="1"] { background-color: var(--cell-1); }
+    .legend-square[data-level="2"] { background-color: var(--cell-2); }
+    .legend-square[data-level="3"] { background-color: var(--cell-3); }
+    .legend-square[data-level="4"] { background-color: var(--cell-4); }
+
+    /* Right Sidebar (Year Switcher) */
+    .year-sidebar {
+      width: 110px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 28px;
+    }
+
+    .year-btn {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 7px 16px;
+      font-size: 13px;
+      font-weight: 400;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .year-btn:hover {
+      color: var(--text);
+      background-color: var(--tool-bg);
+    }
+
+    .year-btn.active {
+      background-color: var(--blue-btn);
+      color: #FFFFFF;
+      font-weight: 500;
+    }
+
+    .custom-year-row {
+      margin-top: 6px;
+      display: flex;
+      gap: 3px;
+    }
+
+    .custom-year-input {
+      width: 65px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 4px 6px;
+      color: var(--text);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .custom-year-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text);
+      border-radius: 6px;
+      padding: 4px 7px;
+      font-size: 11px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .custom-year-btn:hover {
+      background: var(--blue-btn);
+      color: #FFF;
+      border-color: var(--blue-btn);
+    }
+
+    /* Modal / Code Drawer */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 680px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .code-view {
+      background: #0D1117;
+      border: 1px solid #30363D;
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: #E6EDF3;
+      max-height: 240px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+
+    .toast-pill {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #1F883D;
+      color: #FFFFFF;
+      padding: 0.65rem 1.25rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 2000;
+      pointer-events: none;
+    }
+
+    .toast-pill.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Floating Tooltip */
+    .tooltip {
+      position: fixed;
+      pointer-events: none;
+      background: #24292F;
+      color: #FFFFFF;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      white-space: nowrap;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      transform: translate(-50%, -130%);
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Header -->
+    <header>
+      <div class="title-group">
+        <svg viewBox="0 0 16 16" version="1.1" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
+        <div>
+          <h1>GitHub Contribution Studio</h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <a href="https://github.com/Shafaq-codes" target="_blank" class="dev-badge-btn" title="View Developer's GitHub (shafaq-codes)">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path></svg>
+          <span>Developer: shafaq-codes</span>
+        </a>
+
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
+          🌙 Dark Mode
+        </button>
+      </div>
+    </header>
+
+    <!-- Templates Bar -->
+    <section class="templates-bar">
+      <div class="templates-header">
+        <span>Templates</span>
+      </div>
+      <div class="templates-pills">
+        <button class="tpl-btn" onclick="applyTemplate('dev_50')">🌱 Beginner (50 Commits)</button>
+        <button class="tpl-btn" onclick="applyTemplate('dev_100')">💻 Regular Dev (100 Commits)</button>
+        <button class="tpl-btn" onclick="applyTemplate('dev_500')">⚡ Active Dev (500 Commits)</button>
+        <button class="tpl-btn" onclick="applyTemplate('dev_1000')">🔥 Hardcore Dev (1,000 Commits)</button>
+        <button class="tpl-btn" onclick="applyTemplate('full_green')">🟩 100% Full Green (All Boxes)</button>
+      </div>
+    </section>
+
+    <!-- Toolbar -->
+    <section class="toolbar">
+      <div class="tool-group-left">
+        <div class="tool-modes">
+          <button class="mode-btn active" id="penBtn" onclick="setMode('paint')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+            Paint (+ Green)
+          </button>
+          <button class="mode-btn" id="eraserBtn" onclick="setMode('erase')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 2l4 4-10 10H8v-4L18 2z"/><path d="M14 6l4 4"/><path d="M22 22H2"/></svg>
+            Eraser (- White)
+          </button>
+        </div>
+
+        <div class="swatches-box">
+          <span>Brush:</span>
+          <div class="swatch-group">
+            <div class="swatch" style="background: var(--cell-0);" onclick="selectBrush(0)" title="Level 0 (White/Blank)"></div>
+            <div class="swatch selected" style="background: var(--cell-1);" onclick="selectBrush(1)" title="Level 1"></div>
+            <div class="swatch" style="background: var(--cell-2);" onclick="selectBrush(2)" title="Level 2"></div>
+            <div class="swatch" style="background: var(--cell-3);" onclick="selectBrush(3)" title="Level 3"></div>
+            <div class="swatch" style="background: var(--cell-4);" onclick="selectBrush(4)" title="Level 4 (Darkest)"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tool-group-right">
+        <button class="btn" onclick="invertGrid()">Invert</button>
+        <button class="btn" onclick="clearActiveYear()">Clear Grid</button>
+        <button class="btn primary" onclick="exportPlanModal()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+          Export / Copy Plan
+        </button>
+      </div>
+    </section>
+
+    <!-- Main Contribution Viewport & Years Sidebar -->
+    <main class="main-layout">
+      <!-- Main Contribution Column -->
+      <div class="graph-column">
+        <div class="heading-bar">
+          <h2 class="contrib-heading">
+            <strong id="labelTotalCount">1,025</strong> contributions in <span id="labelYear">2026</span>
+          </h2>
+          <button class="contrib-settings-pill">
+            Contribution settings
+            <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor"><path d="M1 1l4 4 4-4"/></svg>
+          </button>
+        </div>
+
+        <div class="github-card">
+          <table class="ContributionCalendar-grid" id="calendarTable">
+            <thead id="calendarHead"></thead>
+            <tbody id="calendarBody"></tbody>
+          </table>
+
+          <div class="card-footer">
+            <a href="https://docs.github.com/articles/why-are-my-contributions-not-showing-up-on-my-profile" target="_blank">
+              Learn how we count contributions
+            </a>
+            <div class="legend-wrapper">
+              <span>Less</span>
+              <span class="legend-square" data-level="0"></span>
+              <span class="legend-square" data-level="1"></span>
+              <span class="legend-square" data-level="2"></span>
+              <span class="legend-square" data-level="3"></span>
+              <span class="legend-square" data-level="4"></span>
+              <span>More</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Year Switcher Sidebar -->
+      <aside class="year-sidebar">
+        <div id="yearButtonsList" style="display: flex; flex-direction: column; gap: 4px;"></div>
+      </aside>
+    </main>
+  </div>
+
+  <!-- Floating Tooltip -->
+  <div class="tooltip" id="cellTooltip"></div>
+
+  <!-- Export Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3 id="modalTitle">Export Configuration</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <p id="modalDesc" style="font-size: 0.85rem; color: var(--text-muted);">
+        Copy this configuration or script to reproduce this exact contribution matrix on your GitHub profile.
+      </p>
+      <div class="code-view" id="modalCodeView"></div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
+        <button class="btn" onclick="closeModal()">Close</button>
+        <button class="btn primary" onclick="copyModalCode()">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast-pill" id="toastPill">Copied to clipboard!</div>
+
+  <script>
+    // State Store for all years
+    const matrixState = {};
+    let activeYear = 2026;
+    let currentMode = 'paint'; // 'paint' or 'erase'
+    let selectedBrush = 1;     // 0, 1, 2, 3, 4
+    let isMouseDown = false;
+
+    // Available Years list
+    const availableYears = [2026, 2025, 2024, 2023, 2022, 2021, 2020];
+    const levelCounts = [0, 2, 8, 16, 25];
+
+    // Mathematical 53-Week Calendar Generator for ANY Year
+    function generateYearCalendar(year) {
+      const jan1 = new Date(year, 0, 1);
+      const jan1Day = jan1.getDay();
+      const startSunday = new Date(year, 0, 1 - jan1Day);
+
+      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const monthStartWeeks = {};
+
+      for (let m = 0; m < 12; m++) {
+        const mDate = new Date(year, m, 1);
+        const diffDays = Math.floor((mDate - startSunday) / (1000 * 60 * 60 * 24));
+        monthStartWeeks[m] = Math.floor(diffDays / 7);
+      }
+
+      const months = [];
+      for (let m = 0; m < 11; m++) {
+        const span = Math.max(1, monthStartWeeks[m + 1] - monthStartWeeks[m]);
+        months.push({ name: monthNames[m], colspan: span });
+      }
+      months.push({ name: 'Dec', colspan: Math.max(1, 53 - monthStartWeeks[11]) });
+
+      const gridRows = [[], [], [], [], [], [], []]; // Sun..Sat
+
+      for (let w = 0; w < 53; w++) {
+        for (let d = 0; d < 7; d++) {
+          const curDate = new Date(startSunday);
+          curDate.setDate(startSunday.getDate() + (w * 7) + d);
+
+          const yyyy = curDate.getFullYear();
+          const mm = String(curDate.getMonth() + 1).padStart(2, '0');
+          const dd = String(curDate.getDate()).padStart(2, '0');
+          const dateStr = `${yyyy}-${mm}-${dd}`;
+
+          gridRows[d].push({
+            date: dateStr,
+            year: yyyy,
+            month: curDate.getMonth(),
+            day: curDate.getDate(),
+            col: w,
+            row: d,
+            isCurrentYear: (yyyy === year)
+          });
+        }
+      }
+
+      return { months, gridRows };
+    }
+
+    // Ensure Year state exists
+    function ensureYearState(year) {
+      if (!matrixState[year]) {
+        matrixState[year] = {};
+        const cal = generateYearCalendar(year);
+        cal.gridRows.forEach((row, rIdx) => {
+          row.forEach(cell => {
+            matrixState[year][cell.date] = {
+              level: 0,
+              count: 0,
+              col: cell.col,
+              row: rIdx,
+              isCurrentYear: cell.isCurrentYear
+            };
+          });
+        });
+      }
+    }
+
+    // Render Matrix
+    function renderMatrix() {
+      ensureYearState(activeYear);
+      const cal = generateYearCalendar(activeYear);
+      const yearData = matrixState[activeYear];
+
+      document.getElementById('labelYear').innerText = activeYear;
+
+      // thead
+      const thead = document.getElementById('calendarHead');
+      thead.innerHTML = '';
+      const trHead = document.createElement('tr');
+      trHead.style.height = '18px';
+
+      const tdCorner = document.createElement('td');
+      tdCorner.style.width = '30px';
+      trHead.appendChild(tdCorner);
+
+      cal.months.forEach(m => {
+        const td = document.createElement('td');
+        td.className = 'month-header-td';
+        td.colSpan = m.colspan;
+        const span = document.createElement('span');
+        span.innerText = m.name;
+        td.appendChild(span);
+        trHead.appendChild(td);
+      });
+      thead.appendChild(trHead);
+
+      // tbody
+      const tbody = document.getElementById('calendarBody');
+      tbody.innerHTML = '';
+      const dayLabels = ['', 'Mon', '', 'Wed', '', 'Fri', ''];
+
+      cal.gridRows.forEach((row, rIdx) => {
+        const tr = document.createElement('tr');
+        tr.style.height = '13.5px';
+
+        const tdLabel = document.createElement('td');
+        tdLabel.className = 'day-label-td';
+        tdLabel.innerText = dayLabels[rIdx] || '';
+        tr.appendChild(tdLabel);
+
+        row.forEach(cell => {
+          const td = document.createElement('td');
+          td.className = 'ContributionCalendar-day';
+          const info = yearData[cell.date] || { level: 0, count: 0 };
+
+          td.dataset.date = cell.date;
+          td.dataset.level = info.level;
+
+          td.addEventListener('mousedown', (e) => {
+            isMouseDown = true;
+            if (e.button === 2) {
+              decreaseCell(cell.date, td);
+            } else {
+              paintCell(cell.date, td);
+            }
+          });
+
+          td.addEventListener('mouseenter', (e) => {
+            showTooltip(e, cell.date);
+            if (isMouseDown) {
+              if (currentMode === 'erase') {
+                decreaseCell(cell.date, td);
+              } else {
+                paintCell(cell.date, td);
+              }
+            }
+          });
+
+          td.addEventListener('mousemove', (e) => updateTooltipPos(e));
+          td.addEventListener('mouseleave', () => hideTooltip());
+          td.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            decreaseCell(cell.date, td);
+          });
+
+          tr.appendChild(td);
+        });
+
+        tbody.appendChild(tr);
+      });
+
+      renderYearButtons();
+      updateTotalCountDisplay();
+    }
+
+    // Paint & Erase
+    function paintCell(date, elem) {
+      ensureYearState(activeYear);
+      const state = matrixState[activeYear][date];
+      if (!state) return;
+
+      let nextLvl = state.level;
+      if (currentMode === 'erase') {
+        nextLvl = Math.max(0, nextLvl - 1);
+      } else {
+        if (selectedBrush !== null) {
+          nextLvl = selectedBrush;
+        } else {
+          nextLvl = (nextLvl + 1) > 4 ? 4 : nextLvl + 1;
+        }
+      }
+
+      state.level = nextLvl;
+      state.count = levelCounts[nextLvl];
+      elem.dataset.level = nextLvl;
+      updateTotalCountDisplay();
+    }
+
+    function decreaseCell(date, elem) {
+      ensureYearState(activeYear);
+      const state = matrixState[activeYear][date];
+      if (!state) return;
+
+      const nextLvl = Math.max(0, state.level - 1);
+      state.level = nextLvl;
+      state.count = levelCounts[nextLvl];
+      elem.dataset.level = nextLvl;
+      updateTotalCountDisplay();
+    }
+
+    function updateTotalCountDisplay() {
+      ensureYearState(activeYear);
+      let total = 0;
+      for (const info of Object.values(matrixState[activeYear])) {
+        total += (info.count || 0);
+      }
+      document.getElementById('labelTotalCount').innerText = Number(total).toLocaleString();
+    }
+
+    // Year Switcher
+    function renderYearButtons() {
+      const container = document.getElementById('yearButtonsList');
+      container.innerHTML = '';
+
+      availableYears.forEach(yr => {
+        const btn = document.createElement('button');
+        btn.className = `year-btn ${yr === activeYear ? 'active' : ''}`;
+        btn.innerText = yr;
+        btn.onclick = () => switchYear(yr);
+        container.appendChild(btn);
+      });
+    }
+
+    function switchYear(yr) {
+      activeYear = parseInt(yr);
+      renderMatrix();
+    }
+
+    // Toolbar modes
+    function setMode(m) {
+      currentMode = m;
+      document.getElementById('penBtn').classList.toggle('active', m === 'paint');
+      document.getElementById('eraserBtn').classList.toggle('active', m === 'erase');
+    }
+
+    function selectBrush(lvl) {
+      selectedBrush = lvl;
+      setMode(lvl === 0 ? 'erase' : 'paint');
+      document.querySelectorAll('.swatch').forEach((item, idx) => {
+        item.classList.toggle('selected', idx === lvl);
+      });
+    }
+
+    function clearActiveYear() {
+      ensureYearState(activeYear);
+      for (const d of Object.keys(matrixState[activeYear])) {
+        matrixState[activeYear][d].level = 0;
+        matrixState[activeYear][d].count = 0;
+      }
+      renderMatrix();
+      showToast(`Cleared ${activeYear} grid!`);
+    }
+
+    function invertGrid() {
+      ensureYearState(activeYear);
+      for (const d of Object.keys(matrixState[activeYear])) {
+        const cur = matrixState[activeYear][d].level;
+        const inv = cur === 0 ? 4 : (4 - cur);
+        matrixState[activeYear][d].level = inv;
+        matrixState[activeYear][d].count = levelCounts[inv];
+      }
+      renderMatrix();
+      showToast(`Inverted ${activeYear} canvas!`);
+    }
+
+    // Templates
+    function applyTemplate(type) {
+      ensureYearState(activeYear);
+      const cal = generateYearCalendar(activeYear);
+      const yearData = matrixState[activeYear];
+
+      // Get all dates belonging to current year
+      const validDates = [];
+      cal.gridRows.forEach(row => {
+        row.forEach(cell => {
+          if (cell.isCurrentYear) {
+            validDates.push(cell.date);
+          }
+        });
+      });
+
+      // Clear all dates first
+      for (const d of Object.keys(yearData)) {
+        yearData[d].level = 0;
+        yearData[d].count = 0;
+      }
+
+      if (type === 'dev_50' || type === 'dev_100' || type === 'dev_500' || type === 'dev_1000') {
+        const targetCommits = type === 'dev_50' ? 50 : (type === 'dev_100' ? 100 : (type === 'dev_500' ? 500 : 1000));
+        let currentCommits = 0;
+
+        // Shuffle dates randomly
+        const shuffled = [...validDates].sort(() => Math.random() - 0.5);
+        let dateIdx = 0;
+
+        while (currentCommits < targetCommits && dateIdx < shuffled.length) {
+          const dt = shuffled[dateIdx++];
+          
+          // Random commit counts with realistic levels 1, 2, 3, 4
+          const r = Math.random();
+          let cnt = 1;
+          let lvl = 1;
+
+          if (r > 0.92) {
+            cnt = Math.min(targetCommits - currentCommits, Math.floor(Math.random() * 8) + 12);
+            lvl = 4;
+          } else if (r > 0.72) {
+            cnt = Math.min(targetCommits - currentCommits, Math.floor(Math.random() * 5) + 6);
+            lvl = 3;
+          } else if (r > 0.40) {
+            cnt = Math.min(targetCommits - currentCommits, Math.floor(Math.random() * 3) + 3);
+            lvl = 2;
+          } else {
+            cnt = Math.min(targetCommits - currentCommits, Math.floor(Math.random() * 2) + 1);
+            lvl = 1;
+          }
+
+          if (cnt > 0) {
+            yearData[dt].count = cnt;
+            yearData[dt].level = lvl;
+            currentCommits += cnt;
+          }
+        }
+
+        const labels = {
+          'dev_50': 'Beginner (50 Commits)',
+          'dev_100': 'Regular Dev (100 Commits)',
+          'dev_500': 'Active Dev (500 Commits)',
+          'dev_1000': 'Hardcore Dev (1,000 Commits)'
+        };
+        showToast(`Applied ${labels[type]}!`);
+      }
+
+      else if (type === 'full_green') {
+        // Complete 100% fill across all boxes of the year
+        validDates.forEach(dt => {
+          const r = Math.random();
+          let lvl = 1;
+          let cnt = 2;
+          if (r > 0.85) {
+            lvl = 4; cnt = 15;
+          } else if (r > 0.60) {
+            lvl = 3; cnt = 8;
+          } else if (r > 0.30) {
+            lvl = 2; cnt = 4;
+          } else {
+            lvl = 1; cnt = 2;
+          }
+          yearData[dt].level = lvl;
+          yearData[dt].count = cnt;
+        });
+        showToast('Applied 100% Full Green (All Boxes Filled)!');
+      }
+
+      renderMatrix();
+    }
+
+    // Export & Automation
+    function exportAutomationScript() {
+      ensureYearState(activeYear);
+      const yearData = matrixState[activeYear];
+      const activeEntries = Object.entries(yearData).filter(([_, v]) => v.count > 0);
+
+      if (activeEntries.length === 0) {
+        showToast('Grid is empty! Draw or pick a template first.');
+        return;
+      }
+
+      let script = `#!/bin/bash
+# =========================================================
+# Git Auto-Commit Script for Year ${activeYear}
+# Total Commits to Generate: ${activeEntries.reduce((sum, [_, v]) => sum + v.count, 0)}
+# =========================================================
+
+mkdir -p git-canvas-${activeYear}
+cd git-canvas-${activeYear}
+git init
+git checkout -b main 2>/dev/null || true
+
+echo "# Contribution Matrix ${activeYear}" > README.md
+git add README.md
+git commit -m "docs: initial repository setup" --date="${activeYear}-01-01T12:00:00"
+
+`;
+
+      activeEntries.forEach(([date, info]) => {
+        for (let i = 0; i < info.count; i++) {
+          const hour = 11 + (i % 10);
+          const min = (i * 7) % 60;
+          const timestamp = `${date}T${String(hour).padStart(2, '0')}:${String(min).padStart(2, '0')}:00`;
+          script += `echo "${timestamp} - contribution update" >> activity.log\n`;
+          script += `git add activity.log\n`;
+          script += `GIT_AUTHOR_DATE="${timestamp}" GIT_COMMITTER_DATE="${timestamp}" git commit -m "feat(core): update utility module [${date}]" --quiet\n`;
+        }
+      });
+
+      script += `\n# Add your private repo and push:\n`;
+      script += `# git remote add origin https://github.com/<YOUR-USERNAME>/<PRIVATE-REPO>.git\n`;
+      script += `# git push -u origin main --force\n`;
+      script += `echo "Successfully generated ${activeEntries.reduce((sum, [_, v]) => sum + v.count, 0)} commits for ${activeYear}!"\n`;
+
+      document.getElementById('modalTitle').innerText = `One-Click Git Shell Script (${activeYear})`;
+      document.getElementById('modalDesc').innerText = `Run this script in terminal to automatically generate the exact commit matrix in any private repository!`;
+      document.getElementById('modalCodeView').innerText = script;
+      document.getElementById('modalOverlay').style.display = 'flex';
+    }
+
+    function exportPlanModal() {
+      ensureYearState(activeYear);
+      const yearData = matrixState[activeYear];
+      const activeEntries = {};
+
+      for (const [dt, info] of Object.entries(yearData)) {
+        if (info.count > 0) {
+          activeEntries[dt] = {
+            level: info.level,
+            commits: info.count
+          };
+        }
+      }
+
+      const plan = {
+        app: "GitHub Contribution Studio",
+        year: activeYear,
+        totalDays: Object.keys(activeEntries).length,
+        totalCommits: Object.values(activeEntries).reduce((a, b) => a + b.commits, 0),
+        schedule: activeEntries
+      };
+
+      document.getElementById('modalTitle').innerText = `Exported JSON Plan (${activeYear})`;
+      document.getElementById('modalDesc').innerText = `Share this JSON plan or use it with any automation runner.`;
+      document.getElementById('modalCodeView').innerText = JSON.stringify(plan, null, 2);
+      document.getElementById('modalOverlay').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').style.display = 'none';
+    }
+
+    function copyModalCode() {
+      const code = document.getElementById('modalCodeView').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        closeModal();
+        showToast('Copied to clipboard!');
+      });
+    }
+
+    // Tooltip
+    const tooltip = document.getElementById('cellTooltip');
+
+    function showTooltip(e, date) {
+      ensureYearState(activeYear);
+      const info = matrixState[activeYear][date] || { count: 0 };
+      const countStr = info.count === 0 ? 'No contributions' : (info.count === 1 ? '1 contribution' : `${info.count} contributions`);
+      const d = new Date(date + 'T00:00:00');
+      const dateFormatted = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+      tooltip.innerText = `${countStr} on ${dateFormatted}.`;
+      tooltip.classList.add('visible');
+      updateTooltipPos(e);
+    }
+
+    function updateTooltipPos(e) {
+      tooltip.style.left = `${e.clientX}px`;
+      tooltip.style.top = `${e.clientY - 14}px`;
+    }
+
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
+
+    function showToast(msg) {
+      const p = document.getElementById('toastPill');
+      p.innerText = msg;
+      p.classList.add('show');
+      setTimeout(() => p.classList.remove('show'), 2500);
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const cur = html.getAttribute('data-theme') || 'light';
+      const next = cur === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      document.getElementById('themeBtn').innerText = next === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode';
+    }
+
+    // Always enforce bright mode as default when anyone opens the site
+    document.documentElement.setAttribute('data-theme', 'light');
+
+    document.addEventListener('mouseup', () => { isMouseDown = false; });
+
+    // Boot: Preload live 2026/2025 commits
+    fetch('official_years_data.json')
+      .then(res => res.json())
+      .then(data => {
+        for (const yr of ['2025', '2026']) {
+          if (data[yr]) {
+            ensureYearState(parseInt(yr));
+            for (const [dt, info] of Object.entries(data[yr].days)) {
+              if (matrixState[yr] && matrixState[yr][dt]) {
+                matrixState[yr][dt].level = info.level;
+                matrixState[yr][dt].count = info.count;
+              }
+            }
+          }
+        }
+        renderMatrix();
+      })
+      .catch(() => {
+        renderMatrix();
+      });
+  </script>
+</body>
+</html>
