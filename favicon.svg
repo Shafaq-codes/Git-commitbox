@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D1117"/>
+      <stop offset="100%" stop-color="#161B22"/>
+    </linearGradient>
+    <linearGradient id="glowGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#39D353"/>
+      <stop offset="100%" stop-color="#216E39"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background Base -->
+  <rect width="64" height="64" rx="16" fill="url(#bgGrad)"/>
+  <rect x="1" y="1" width="62" height="62" rx="15" stroke="rgba(255, 255, 255, 0.12)" stroke-width="1.5"/>
+
+  <!-- Matrix Grid (3x3 Contribution Squares with GitHub Shades) -->
+  <!-- Row 1 -->
+  <rect x="11" y="11" width="11" height="11" rx="2.5" fill="#216E39"/>
+  <rect x="26.5" y="11" width="11" height="11" rx="2.5" fill="#40C463"/>
+  <rect x="42" y="11" width="11" height="11" rx="2.5" fill="#30A14E"/>
+
+  <!-- Row 2 -->
+  <rect x="11" y="26.5" width="11" height="11" rx="2.5" fill="#30A14E"/>
+  <rect x="26.5" y="26.5" width="11" height="11" rx="2.5" fill="#39D353"/>
+  <rect x="42" y="26.5" width="11" height="11" rx="2.5" fill="#9BE9A8"/>
+
+  <!-- Row 3 -->
+  <rect x="11" y="42" width="11" height="11" rx="2.5" fill="#161B22" stroke="rgba(255, 255, 255, 0.1)"/>
+  <rect x="26.5" y="42" width="11" height="11" rx="2.5" fill="#30A14E"/>
+  <rect x="42" y="42" width="11" height="11" rx="2.5" fill="#40C463"/>
+</svg>
