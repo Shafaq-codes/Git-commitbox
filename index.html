@@ -653,6 +653,20 @@
       white-space: pre-wrap;
     }
 
+    .kbd {
+      display: inline-block;
+      padding: 3px 6px;
+      font-size: 11px;
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      line-height: 10px;
+      color: var(--text);
+      background-color: var(--bg);
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      box-shadow: inset 0 -1px 0 var(--border-color);
+      font-weight: 600;
+    }
+
     .toast-pill {
       position: fixed;
       bottom: 2rem;
@@ -755,6 +769,10 @@
       <div class="tool-group-right">
         <button class="btn" onclick="invertGrid()">Invert</button>
         <button class="btn" onclick="clearActiveYear()">Clear Grid</button>
+        <button class="btn" onclick="toggleShortcutsModal()" title="Keyboard Shortcuts & Quick Tips (?)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M18 12h.01M8 16h8"/></svg>
+          Shortcuts
+        </button>
         <button class="btn primary" onclick="exportPlanModal()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
           Export
@@ -823,6 +841,46 @@
       <div style="display: flex; justify-content: flex-end; gap: 0.5rem;">
         <button class="btn" onclick="closeModal()">Close</button>
         <button class="btn primary" onclick="copyModalCode()">Copy to Clipboard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shortcuts Modal -->
+  <div class="modal-overlay" id="shortcutsModal">
+    <div class="modal-box" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 style="display: flex; align-items: center; gap: 8px;">
+          <span>⌨️</span> Keyboard Shortcuts & Tips
+        </h3>
+        <button class="modal-close" onclick="toggleShortcutsModal()">&times;</button>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">
+        Boost your productivity with quick keyboard shortcuts and mouse tricks:
+      </p>
+      <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
+          <span>Select Brush Level</span>
+          <div><kbd class="kbd">0</kbd> to <kbd class="kbd">4</kbd></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
+          <span>Undo Paint Action</span>
+          <div><kbd class="kbd">Ctrl</kbd> + <kbd class="kbd">Z</kbd></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
+          <span>1-Click Eraser</span>
+          <span><kbd class="kbd">Right-Click</kbd> on any cell</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
+          <span>Open Export Dialog</span>
+          <div><kbd class="kbd">E</kbd></div>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
+          <span>Toggle Shortcuts Guide</span>
+          <div><kbd class="kbd">?</kbd> or <kbd class="kbd">H</kbd></div>
+        </div>
+      </div>
+      <div style="display: flex; justify-content: flex-end;">
+        <button class="btn primary" onclick="toggleShortcutsModal()">Got it!</button>
       </div>
     </div>
   </div>
@@ -1002,13 +1060,20 @@
       updateTotalCountDisplay();
     }
 
-    // Paint & Erase
+    // Paint, Erase & Undo State
+    const undoStack = [];
+
     function paintCell(date, elem, e) {
       ensureYearState(activeYear);
       const state = matrixState[activeYear][date];
       if (!state) return;
 
       const nextLvl = (selectedBrush !== null) ? selectedBrush : 1;
+      if (state.level === nextLvl) return;
+
+      undoStack.push({ year: activeYear, date, prevLevel: state.level, prevCount: state.count });
+      if (undoStack.length > 80) undoStack.shift();
+
       state.level = nextLvl;
       state.count = levelCounts[nextLvl];
       elem.dataset.level = nextLvl;
@@ -1021,11 +1086,33 @@
       const state = matrixState[activeYear][date];
       if (!state) return;
 
+      if (state.level === 0 && state.count === 0) return;
+
+      undoStack.push({ year: activeYear, date, prevLevel: state.level, prevCount: state.count });
+      if (undoStack.length > 80) undoStack.shift();
+
       state.level = 0;
       state.count = 0;
       elem.dataset.level = 0;
       updateTotalCountDisplay();
       if (e) showTooltip(e, date);
+    }
+
+    function undo() {
+      if (undoStack.length === 0) {
+        showToast('Nothing to undo');
+        return;
+      }
+      const item = undoStack.pop();
+      if (!matrixState[item.year] || !matrixState[item.year][item.date]) return;
+      matrixState[item.year][item.date].level = item.prevLevel;
+      matrixState[item.year][item.date].count = item.prevCount;
+      if (item.year === activeYear) {
+        const td = document.querySelector(`td[data-date="${item.date}"]`);
+        if (td) td.dataset.level = item.prevLevel;
+        updateTotalCountDisplay();
+      }
+      showToast('Undone!');
     }
 
     function updateTotalCountDisplay() {
@@ -1260,6 +1347,12 @@ git commit -m "docs: initial repository setup" --date="${activeYear}-01-01T12:00
       document.getElementById('modalOverlay').style.display = 'none';
     }
 
+    function toggleShortcutsModal() {
+      const modal = document.getElementById('shortcutsModal');
+      const isVisible = modal.style.display === 'flex';
+      modal.style.display = isVisible ? 'none' : 'flex';
+    }
+
     function copyModalCode() {
       const code = document.getElementById('modalCodeView').innerText;
       navigator.clipboard.writeText(code).then(() => {
@@ -1311,6 +1404,37 @@ git commit -m "docs: initial repository setup" --date="${activeYear}-01-01T12:00
     document.documentElement.setAttribute('data-theme', 'light');
 
     document.addEventListener('mouseup', () => { isMouseDown = false; });
+
+    // Keyboard Shortcuts Listener
+    window.addEventListener('keydown', (e) => {
+      // Don't trigger if user is typing in an input
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+
+      // Quick Brush Switching: 0 to 4
+      if (e.key >= '0' && e.key <= '4') {
+        selectBrush(parseInt(e.key));
+        showToast(`Brush Level ${e.key} selected`);
+      }
+      // Undo: Ctrl+Z or Cmd+Z
+      else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
+        e.preventDefault();
+        undo();
+      }
+      // Export: E
+      else if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.metaKey) {
+        exportPlanModal();
+      }
+      // Shortcuts Guide: ? or H
+      else if (e.key === '?' || e.key.toLowerCase() === 'h') {
+        toggleShortcutsModal();
+      }
+      // Escape to close modals
+      else if (e.key === 'Escape') {
+        closeModal();
+        const scModal = document.getElementById('shortcutsModal');
+        if (scModal) scModal.style.display = 'none';
+      }
+    });
 
     // Boot: Always start with a completely empty, fresh grid (0 contributions)
     ensureYearState(activeYear);
