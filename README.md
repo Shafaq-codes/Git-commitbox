@@ -21,6 +21,12 @@
 ## ✨ Features
 
 - 🎨 **Interactive Matrix Painter:** Click and drag to paint contribution levels (0 to 4) directly onto an authentic GitHub graph grid.
+- ⌨️ **Keyboard & Mouse Shortcuts:**
+  - `S` : Toggle Keyboard Shortcuts & Quick Tips guide modal.
+  - `0` – `4` : Fast brush level selection (`0` = Eraser, `1`–`4` = Green intensity levels).
+  - `Ctrl + Z` / `Cmd + Z` : Instant Undo for paint operations.
+  - `Right-Click` : 1-Click complete eraser on any matrix cell.
+  - `E` : Open JSON plan export modal.
 - ⚡ **5 Instant Developer Templates:**
   - 🌱 **Beginner (50 Commits):** Realistic early-stage developer activity spread.
   - 💻 **Regular Dev (100 Commits):** Natural, consistent commit cadence.
