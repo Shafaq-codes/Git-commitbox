@@ -769,7 +769,7 @@
       <div class="tool-group-right">
         <button class="btn" onclick="invertGrid()">Invert</button>
         <button class="btn" onclick="clearActiveYear()">Clear Grid</button>
-        <button class="btn" onclick="toggleShortcutsModal()" title="Keyboard Shortcuts & Quick Tips (?)">
+        <button class="btn" onclick="toggleShortcutsModal()" title="Keyboard Shortcuts & Quick Tips (Press S)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M18 12h.01M8 16h8"/></svg>
           Shortcuts
         </button>
@@ -876,7 +876,7 @@
         </div>
         <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: var(--tool-bg); border-radius: 6px; font-size: 0.85rem;">
           <span>Toggle Shortcuts Guide</span>
-          <div><kbd class="kbd">?</kbd> or <kbd class="kbd">H</kbd></div>
+          <div><kbd class="kbd">S</kbd></div>
         </div>
       </div>
       <div style="display: flex; justify-content: flex-end;">
@@ -1424,8 +1424,8 @@ git commit -m "docs: initial repository setup" --date="${activeYear}-01-01T12:00
       else if (e.key.toLowerCase() === 'e' && !e.ctrlKey && !e.metaKey) {
         exportPlanModal();
       }
-      // Shortcuts Guide: ? or H
-      else if (e.key === '?' || e.key.toLowerCase() === 'h') {
+      // Shortcuts Guide: S
+      else if (e.key.toLowerCase() === 's' && !e.ctrlKey && !e.metaKey) {
         toggleShortcutsModal();
       }
       // Escape to close modals
